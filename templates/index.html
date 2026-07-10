@@ -1,0 +1,14 @@
+﻿{% extends "base.html" %}
+{% block title %}Agent Showcase — Home{% endblock %}
+{% block content %}
+<h1>Agent Showcase</h1>
+<p>A collection of small LLM-powered agents built during this internship.</p>
+<div class="agent-grid">
+    {% for agent in agents %}
+    <a href="{{ agent.url }}" class="agent-card">
+        <h2>{{ agent.name }}</h2>
+        <p>{{ agent.description }}</p>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
