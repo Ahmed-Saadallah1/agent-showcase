@@ -1,0 +1,127 @@
+﻿{% extends "base.html" %}
+{% block title %}Transliterator{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Transliterator</h1>
+    <button type="button" class="icon-btn" id="infoBtn" aria-label="About this agent" title="About this agent">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <line x1="12" y1="11" x2="12" y2="16"/>
+            <circle cx="12" cy="8" r="0.5" fill="currentColor" stroke="none"/>
+        </svg>
+    </button>
+</div>
+<p>Enter one name, or multiple names (one per line) for a batch. The agent detects each script and transliterates by sound -- never by meaning.</p>
+
+<form method="POST" class="agent-form">
+    <label for="name">Name(s)</label>
+    <textarea id="name" name="name" rows="4" placeholder="e.g. وردة&#10;Ahmed Saadallah&#10;فاطمة" required>{{ name_input }}</textarea>
+    <button type="submit">Transliterate</button>
+</form>
+
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
+{% if result %}
+<div class="result">
+    {% if detected %}
+    <span class="detected-badge">Detected: {{ detected|capitalize }} &rarr; transliterating to {{ 'English' if detected == 'arabic' else 'Arabic' }}</span>
+    {% endif %}
+    <div class="result-row">
+        <p id="resultText">{{ result }}</p>
+        <button type="button" class="icon-btn" id="copyBtn" aria-label="Copy result" title="Copy result">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="11" height="11" rx="2"/>
+                <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+            </svg>
+        </button>
+    </div>
+</div>
+{% endif %}
+
+{% if batch_results %}
+<div class="result">
+    <div class="result-row" style="margin-bottom: 1rem;">
+        <h3 style="margin: 0;">Batch results ({{ batch_results|length }})</h3>
+        <button type="button" class="icon-btn" id="copyAllBtn" aria-label="Copy all results" title="Copy all results">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="11" height="11" rx="2"/>
+                <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+            </svg>
+        </button>
+    </div>
+    <table class="batch-table">
+        <thead>
+            <tr><th>Input</th><th>Detected</th><th>Result</th></tr>
+        </thead>
+        <tbody>
+            {% for item in batch_results %}
+            <tr>
+                <td>{{ item.input }}</td>
+                {% if item.error %}
+                <td colspan="2" class="error">{{ item.error }}</td>
+                {% else %}
+                <td>{{ item.detected|capitalize }}</td>
+                <td class="batch-result-cell">{{ item.result }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<div class="modal-overlay" id="infoModal">
+    <div class="modal">
+        <button type="button" class="modal-close" id="closeModal" aria-label="Close">&times;</button>
+        <h2>About this agent</h2>
+        <dl class="info-list">
+            <dt>What it does</dt>
+            <dd>Auto-detects whether an input name is in Arabic or English script, then transliterates it into the other script based on pronunciation. Supports both single names and batches (one name per line). It is built to never translate meaning -- for example, a name containing the Arabic word for "rose" is kept as a phonetic name, not translated into "rose."</dd>
+            <dt>Model used</dt>
+            <dd>deepseek/deepseek-v4-flash, via OpenRouter</dd>
+            <dt>About this model</dt>
+            <dd>DeepSeek V4 Flash is an efficiency-focused model built for fast, responsive output while maintaining strong reasoning and language performance. Note: unlike this showcase's other agents, this model is a paid OpenRouter model rather than a free-tier one.</dd>
+            <dt>How it works</dt>
+            <dd>A LangChain tool-calling agent detects the input script in code (not by the model), then asks the model to transliterate phonetically, with explicit instructions preserving pronunciation and formatting rules to keep the output clean. Batches are processed one name at a time.</dd>
+        </dl>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const copyBtn = document.getElementById('copyBtn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+            const text = document.getElementById('resultText').innerText;
+            navigator.clipboard.writeText(text).then(function () {
+                copyBtn.classList.add('copied');
+                setTimeout(function () { copyBtn.classList.remove('copied'); }, 1500);
+            });
+        });
+    }
+
+    const copyAllBtn = document.getElementById('copyAllBtn');
+    if (copyAllBtn) {
+        copyAllBtn.addEventListener('click', function () {
+            const cells = document.querySelectorAll('.batch-result-cell');
+            const text = Array.from(cells).map(function (c) { return c.innerText; }).join('\n');
+            navigator.clipboard.writeText(text).then(function () {
+                copyAllBtn.classList.add('copied');
+                setTimeout(function () { copyAllBtn.classList.remove('copied'); }, 1500);
+            });
+        });
+    }
+
+    const infoBtn = document.getElementById('infoBtn');
+    const modal = document.getElementById('infoModal');
+    const closeModal = document.getElementById('closeModal');
+    infoBtn.addEventListener('click', function () { modal.classList.add('open'); });
+    closeModal.addEventListener('click', function () { modal.classList.remove('open'); });
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) modal.classList.remove('open');
+    });
+});
+</script>
+{% endblock %}

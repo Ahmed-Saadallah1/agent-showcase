@@ -99,3 +99,139 @@ footer {
     color: #888;
     font-size: 0.9rem;
 }
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.icon-btn {
+    background: none;
+    border: 1px solid #d0d0d8;
+    color: #1a1a2e;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+.icon-btn:hover {
+    background: #f0f0f7;
+    border-color: #1a1a2e;
+}
+.icon-btn.copied {
+    background: #1a1a2e;
+    border-color: #1a1a2e;
+    color: #fff;
+}
+.icon-btn.copied svg {
+    display: none;
+}
+.icon-btn.copied::after {
+    content: "✓";
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.detected-badge {
+    display: inline-block;
+    background: #eef0ff;
+    color: #33335c;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+}
+
+.result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.result-row p {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 46, 0.5);
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 100;
+}
+.modal-overlay.open {
+    display: flex;
+}
+.modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 520px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+}
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #888;
+}
+.modal-close:hover {
+    color: #1a1a2e;
+}
+.modal h2 {
+    margin-bottom: 1rem;
+}
+.info-list dt {
+    font-weight: bold;
+    margin-top: 1rem;
+    color: #1a1a2e;
+}
+.info-list dt:first-child {
+    margin-top: 0;
+}
+.info-list dd {
+    margin: 0.25rem 0 0 0;
+    color: #333;
+}
+
+.batch-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+.batch-table th, .batch-table td {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.95rem;
+}
+.batch-table th {
+    color: #666;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.batch-table tr:last-child td {
+    border-bottom: none;
+}
