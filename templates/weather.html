@@ -1,0 +1,17 @@
+﻿{% extends "base.html" %}
+{% block title %}Weather Agent{% endblock %}
+{% block content %}
+<h1>Weather Agent</h1>
+<form method="POST">
+    <input type="text" name="city" placeholder="Enter city name" value="{{ city_input }}">
+    <button type="submit">Get Weather</button>
+</form>
+
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
+{% if result %}
+<div class="result">{{ result }}</div>
+{% endif %}
+{% endblock %}

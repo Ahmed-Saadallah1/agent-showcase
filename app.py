@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from flask import Flask, render_template, request
 from agents.transliterator_agent import run_transliteration, detect_script, run_batch_transliteration
+from agents.weather_agent import run_weather_check
 
 app = Flask(__name__)
 
@@ -12,6 +13,12 @@ AGENTS = [
         "name": "Transliterator",
         "description": "Converts names between Arabic and English by sound, not meaning -- auto-detects the script.",
         "url": "/transliterator"
+    },
+    {
+        "id": "weather",
+        "name": "Weather Agent",
+        "description": "Get the current weather for any city, powered by WeatherAPI.",
+        "url": "/weather"
     },
 ]
 
@@ -49,6 +56,29 @@ def transliterator():
         detected=detected,
         name_input=name_input,
         batch_results=batch_results
+    )
+
+@app.route("/weather", methods=["GET", "POST"])
+def weather():
+    result = None
+    error = None
+    city_input = ""
+
+    if request.method == "POST":
+        city_input = request.form.get("city", "").strip()
+        if not city_input:
+            error = "Please enter a city name."
+        else:
+            try:
+                result = run_weather_check(city_input)
+            except Exception as e:
+                error = f"Something went wrong: {e}"
+
+    return render_template(
+        "weather.html",
+        result=result,
+        error=error,
+        city_input=city_input
     )
 
 if __name__ == "__main__":
