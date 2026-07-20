@@ -235,3 +235,50 @@ footer {
 .batch-table tr:last-child td {
     border-bottom: none;
 }
+
+.chat-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+.chat-box {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.chat-message {
+    padding: 0.6rem 1rem;
+    border-radius: 14px;
+    max-width: 80%;
+    line-height: 1.4;
+}
+.user-message {
+    align-self: flex-end;
+    background: #1a1a2e;
+    color: #fff;
+}
+.assistant-message {
+    align-self: flex-start;
+    background: #eafbea;
+    border: 1px solid #b7e4b7;
+    color: #1a1a2e;
+}
+.chat-form {
+    display: flex;
+    gap: 0.5rem;
+}
+.chat-form input {
+    flex: 1;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

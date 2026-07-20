@@ -1,11 +1,14 @@
 ﻿import os
+import uuid
 from dotenv import load_dotenv
 load_dotenv()
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, jsonify
 from agents.transliterator_agent import run_transliteration, detect_script, run_batch_transliteration
 from agents.weather_agent import run_weather_check
+from agents.worldcup_agent import run_worldcup_chat
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-only-change-me")
 
 AGENTS = [
     {
@@ -19,6 +22,12 @@ AGENTS = [
         "name": "Weather Agent",
         "description": "Get the current weather for any city, powered by WeatherAPI.",
         "url": "/weather"
+    },
+    {
+        "id": "worldcup",
+        "name": "World Cup Historian",
+        "description": "Chat about FIFA World Cup stats and history from 1930 to 2026, backed by live search.",
+        "url": "/worldcup"
     },
 ]
 
@@ -80,6 +89,42 @@ def weather():
         error=error,
         city_input=city_input
     )
+
+@app.route("/worldcup", methods=["GET"])
+def worldcup():
+    if "worldcup_thread_id" not in session:
+        session["worldcup_thread_id"] = str(uuid.uuid4())
+    if "worldcup_history" not in session:
+        session["worldcup_history"] = []
+
+    return render_template("worldcup.html", history=session["worldcup_history"])
+
+@app.route("/worldcup/reset", methods=["POST"])
+def worldcup_reset():
+    session["worldcup_thread_id"] = str(uuid.uuid4())
+    session["worldcup_history"] = []
+    session.modified = True
+    return jsonify({"status": "ok"})
+
+@app.route("/worldcup/message", methods=["POST"])
+def worldcup_message():
+    if "worldcup_thread_id" not in session:
+        session["worldcup_thread_id"] = str(uuid.uuid4())
+    if "worldcup_history" not in session:
+        session["worldcup_history"] = []
+
+    user_message = request.json.get("message", "").strip()
+    if not user_message:
+        return jsonify({"error": "Please enter a message."}), 400
+
+    try:
+        reply = run_worldcup_chat(user_message, session["worldcup_thread_id"])
+        session["worldcup_history"].append({"role": "user", "content": user_message})
+        session["worldcup_history"].append({"role": "assistant", "content": reply})
+        session.modified = True
+        return jsonify({"reply": reply})
+    except Exception as e:
+        return jsonify({"error": f"Something went wrong: {e}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
