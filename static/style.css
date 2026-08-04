@@ -282,3 +282,34 @@ footer {
     justify-content: space-between;
     align-items: center;
 }
+
+.upload-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+}
+.upload-box button {
+    flex-shrink: 0;
+}
+#uploadStatus {
+    font-size: 0.9rem;
+    color: #666;
+}
+.doc-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+.doc-chip {
+    background: #eef0ff;
+    color: #33335c;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+}
